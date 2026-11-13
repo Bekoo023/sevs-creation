@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProductStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  IN_PRODUCTION
+  SHIPPED
+  COMPLETED
+  CANCELLED
+  PAYMENT_FAILED
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String    @default("")
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model Product {
+  id             String        @id @default(cuid())
+  slug           String        @unique
+  name           String
+  subtitle       String        @default("")
+  description    String        @default("")
+  details        String[]      @default([])
+  priceCents     Int
+  stock          Int?
+  status         ProductStatus @default(ACTIVE)
+  featured       Boolean       @default(false)
+  // Voorbeeldinhoud: demonstratieproduct met fictieve gegevens.
+  isExample      Boolean       @default(false)
+  personalizable Boolean       @default(false)
+  animal         String?
+  frames         String[]      @default([])
+  backgrounds    String[]      @default([])
+  // [{ src, alt, width, height, frame?, background? }]
+  images         Json          @default("[]")
+  category       Category      @relation(fields: [categoryId], references: [id])
+  categoryId     String
+  orderItems     OrderItem[]
+  reviews        Review[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status, categoryId])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  number          String      @unique
+  status          OrderStatus @default(PENDING)
+  email           String
+  firstName       String
+  lastName        String
+  phone           String?
+  street          String
+  houseNumber     String
+  postalCode      String
+  city            String
+  country         String      @default("NL")
+  subtotalCents   Int
+  shippingCents   Int
+  totalCents      Int
+  stripeSessionId String?     @unique
+  paidAt          DateTime?
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model OrderItem {
+  id              String   @id @default(cuid())
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId         String
+  product         Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId       String?
+  name            String
+  unitPriceCents  Int
+  quantity        Int
+  frame           String?
+  background      String?
+  // { naam, geboortedatum, geboortetijd, gewicht, lengte, opmerking? }
+  personalization Json?
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  author    String
+  rating    Int
+  body      String
+  approved  Boolean  @default(false)
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId String?
+  createdAt DateTime @default(now())
+}
