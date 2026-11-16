@@ -35,18 +35,6 @@ export function Footer() {
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <p className="display t-2 max-w-[14ch]">Met liefde gemaakt, voor altijd gekoesterd.</p>
-            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-2 text-sm text-ivory/75">
-              {email && (
-                <a className="link-line" href={`mailto:${email}`}>
-                  {email}
-                </a>
-              )}
-              {instagram && (
-                <a className="link-line" href={instagram} target="_blank" rel="noreferrer">
-                  Instagram
-                </a>
-              )}
-            </div>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-6 lg:col-start-7">
             {groups.map((g) => (
