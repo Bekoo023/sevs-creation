@@ -10,7 +10,7 @@ export function LegalPage({ doc }: { doc: keyof typeof legal }) {
         {sections.map((s, i) => (
           <section key={s.title} className="grid gap-4 border-t border-espresso/15 py-9 md:grid-cols-12">
             <h2 className="font-serif text-2xl leading-tight md:col-span-4">
-              <span className="label mr-4 align-middle text-gold">0{i + 1}</span>
+              <span className="label mr-4 align-middle text-gold">{String(i + 1).padStart(2, "0")}</span>
               {s.title}
             </h2>
             <div className="space-y-3 text-mocha md:col-span-7 md:col-start-6">

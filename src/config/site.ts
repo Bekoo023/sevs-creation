@@ -1,9 +1,3 @@
-/**
- * Centrale webshopconfiguratie.
- *
- * Alles wat hier `null` is, moet door Sevs Creations zelf worden ingevuld.
- * De site toont dan niets of een neutrale melding; er worden geen gegevens verzonnen.
- */
 export const siteConfig = {
   name: "Sevs Creations",
   tagline: "Met liefde gemaakt, voor altijd gekoesterd.",
@@ -13,26 +7,23 @@ export const siteConfig = {
   locale: "nl_NL",
 
   contact: {
-    email: null as string | null,
+    email: "sevilim.6666@gmail.com" as string | null,
     phone: null as string | null,
-    instagram: null as string | null, // volledige URL, bv. https://instagram.com/...
+    instagram: null as string | null,
   },
 
   company: {
-    legalName: null as string | null,
-    kvk: null as string | null,
-    btw: null as string | null,
-    address: null as string | null,
+    legalName: "Sevs-Creation" as string | null,
+    kvk: "93312814" as string | null,
+    btw: "NL005013407B27" as string | null,
+    address: "Pakhuisstraat 1, 1118 DJ Schiphol" as string | null,
   },
 
   shipping: {
-    // VOORBEELDWAARDE. Pas aan naar het echte tarief.
     costCents: 695,
-    // Bedrag waarboven verzending gratis is, of null als dat niet geldt.
-    freeFromCents: null as number | null,
+    freeFromCents: 12000 as number | null,
     countries: ["NL", "BE"] as const,
-    // Levertijd wordt alleen getoond als deze is ingevuld.
-    leadTime: null as string | null,
+    leadTime: "Elke bestelling wordt met de hand gemaakt. De levertijd is 7 dagen." as string | null,
   },
 } as const;
 

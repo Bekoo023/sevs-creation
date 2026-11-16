@@ -33,11 +33,14 @@ export function CheckoutForm({ paymentsLive }: { paymentsLive: boolean }) {
     email: "", firstName: "", lastName: "", phone: "", street: "", houseNumber: "", postalCode: "", city: "", country: "NL",
   });
   const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
+  const [accepted, setAccepted] = useState(false);
+  const [termsError, setTermsError] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   const subtotal = cartSubtotal(items);
   const shipping = shippingFor(subtotal);
+  const hasPersonal = items.some((i) => i.personalization);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,6 +54,11 @@ export function CheckoutForm({ paymentsLive }: { paymentsLive: boolean }) {
       return;
     }
     setErrors({});
+    if (!accepted) {
+      setTermsError(true);
+      document.getElementById("co-terms")?.focus();
+      return;
+    }
     setPending(true);
     try {
       const res = await fetch("/api/checkout", {
@@ -58,6 +66,7 @@ export function CheckoutForm({ paymentsLive }: { paymentsLive: boolean }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           customer: parsed.data,
+          acceptedTerms: true,
           items: items.map((i) => ({
             productId: i.productId,
             quantity: i.quantity,
@@ -155,6 +164,44 @@ export function CheckoutForm({ paymentsLive }: { paymentsLive: boolean }) {
           Je rondt de betaling af in de beveiligde omgeving van Stripe. Daarna kom je terug op deze
           site voor de bevestiging.
         </p>
+
+        {hasPersonal && (
+          <p className="mt-6 max-w-md border-l-2 border-gold pl-4 text-sm text-mocha" role="note">
+            Je bestelling bevat een gepersonaliseerd product. Dat maken we speciaal voor jou, en daarom
+            kun je het niet retourneren: het herroepingsrecht van 14 dagen geldt hiervoor niet.
+            Controleer je gegevens dus goed.
+          </p>
+        )}
+        <div className="mt-6 flex max-w-md items-start gap-3">
+          <input
+            id="co-terms"
+            type="checkbox"
+            checked={accepted}
+            onChange={(e) => {
+              setAccepted(e.target.checked);
+              if (e.target.checked) setTermsError(false);
+            }}
+            aria-invalid={termsError}
+            aria-describedby={termsError ? "co-err-terms" : undefined}
+            className="mt-1 size-4 shrink-0 accent-espresso"
+          />
+          <label htmlFor="co-terms" className="text-sm">
+            Ik ga akkoord met de{" "}
+            <Link href="/algemene-voorwaarden" target="_blank" className="underline underline-offset-4">
+              algemene voorwaarden
+            </Link>{" "}
+            en heb de informatie over{" "}
+            <Link href="/verzending-retourneren" target="_blank" className="underline underline-offset-4">
+              verzending en retourneren
+            </Link>{" "}
+            gelezen.
+          </label>
+        </div>
+        {termsError && (
+          <p id="co-err-terms" className="field-error" role="alert">
+            Ga akkoord met de algemene voorwaarden om te bestellen.
+          </p>
+        )}
         {formError && (
           <p className="field-error mt-6 text-[0.9375rem]" role="alert">
             {formError}

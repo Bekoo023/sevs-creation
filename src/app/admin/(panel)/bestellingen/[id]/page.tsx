@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Submit } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { emailConfigured } from "@/lib/email";
 import { formatBirthDate, formatPrice } from "@/lib/format";
 import { backgroundLabel, frameLabel } from "@/lib/options";
 import { ORDER_STATUS } from "@/lib/order-status";
@@ -30,7 +31,21 @@ export default async function OrderPage({ params }: PageProps<"/admin/bestelling
           <h1 className="display t-2">{order.number}</h1>
           <p className="mt-1 text-mocha">{ORDER_STATUS[order.status]}</p>
         </div>
-        <form action={updateOrderStatus.bind(null, order.id)} className="flex items-end gap-3">
+        <form action={updateOrderStatus.bind(null, order.id)} className="flex flex-wrap items-end gap-3">
+          <div>
+            <label htmlFor="tracking" className="field-label">
+              Track-en-trace <span className="normal-case tracking-normal">(code of link, optioneel)</span>
+            </label>
+            <input
+              id="tracking"
+              name="tracking"
+              type="text"
+              maxLength={300}
+              defaultValue={order.tracking ?? ""}
+              autoComplete="off"
+              className="field min-w-64"
+            />
+          </div>
           <div>
             <label htmlFor="status" className="field-label">
               Status
@@ -46,6 +61,11 @@ export default async function OrderPage({ params }: PageProps<"/admin/bestelling
           <Submit className="btn btn-outline">Opslaan</Submit>
         </form>
       </div>
+      <p className="mt-4 text-sm text-mocha">
+        {emailConfigured()
+          ? "Zet je de status op Verzonden, dan krijgt de klant automatisch een e-mail, met de track-en-trace als die is ingevuld."
+          : "E-mail is nog niet ingesteld (RESEND_API_KEY en EMAIL_FROM). De klant krijgt nu geen bericht bij verzending."}
+      </p>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-3">
         <section className="bg-ivory p-6 lg:col-span-2">

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { checkPassword, createSession, destroySession, requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { sendShippedEmail } from "@/lib/email";
 import { BACKGROUNDS, FRAMES } from "@/lib/options";
 
 export type FormState = { error?: string; ok?: boolean };
@@ -166,7 +167,17 @@ const STATUSES = ["PENDING", "PAID", "IN_PRODUCTION", "SHIPPED", "COMPLETED", "C
 
 export async function updateOrderStatus(id: string, form: FormData) {
   await requireAdmin();
+  const prisma = need();
   const status = z.enum(STATUSES).parse(form.get("status"));
-  await need().order.update({ where: { id }, data: { status } });
+  const tracking = String(form.get("tracking") ?? "").trim().slice(0, 300) || null;
+
+  const before = await prisma.order.findUnique({ where: { id }, select: { status: true } });
+  const order = await prisma.order.update({
+    where: { id },
+    data: { status, tracking },
+    include: { items: true },
+  });
+  // Alleen bij de overgang naar "Verzonden", zodat de klant de e-mail één keer krijgt.
+  if (status === "SHIPPED" && before?.status !== "SHIPPED") await sendShippedEmail(order);
   redirect(`/admin/bestellingen/${id}`);
 }

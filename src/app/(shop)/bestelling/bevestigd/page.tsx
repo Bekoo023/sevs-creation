@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ClearCart } from "@/components/checkout/ClearCart";
 import { db } from "@/lib/db";
+import { emailConfigured } from "@/lib/email";
 import { formatBirthDate, formatPrice } from "@/lib/format";
 import { backgroundLabel, frameLabel } from "@/lib/options";
 import { getStripe } from "@/lib/stripe";
@@ -42,7 +43,9 @@ async function Confirmation({ searchParams }: Pick<PageProps<"/bestelling/bevest
   const copy: Record<State, { title: string; body: string }> = {
     paid: {
       title: "Dank je wel. We gaan voor je aan de slag.",
-      body: "Je betaling is ontvangen. Bewaar je bestelnummer voor als je contact met ons opneemt.",
+      body: emailConfigured()
+        ? "Je betaling is ontvangen. Je krijgt een bevestiging per e-mail. Zie je die niet, kijk dan ook in je spamfolder."
+        : "Je betaling is ontvangen. Bewaar je bestelnummer voor als je contact met ons opneemt.",
     },
     processing: {
       title: "Je bestelling is geplaatst.",
