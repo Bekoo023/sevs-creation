@@ -6,6 +6,7 @@ import "@fontsource/great-vibes/400.css";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-dvh">
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
