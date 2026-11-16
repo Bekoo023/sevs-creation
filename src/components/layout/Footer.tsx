@@ -28,7 +28,6 @@ const groups = [
 ];
 
 export function Footer() {
-  const { instagram, email } = siteConfig.contact;
   return (
     <footer className="bg-espresso text-ivory">
       <div className="shell pt-20 lg:pt-28">

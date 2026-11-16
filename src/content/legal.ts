@@ -245,7 +245,7 @@ export const legal: Record<LegalDocKey, LegalDoc> = {
         body: [
           "We gebruiken je gegevens om je bestelling te maken, de betaling af te handelen, het pakket te bezorgen en je vragen of klachten te beantwoorden. Dat is nodig om de overeenkomst met jou uit te voeren.",
           "Daarnaast bewaren we bestelgegevens voor onze administratie, omdat de wet dat van ons vraagt.",
-          "Technische loggegevens verwerken we op grond van ons gerechtvaardigd belang om de website veilig te houden.",
+          "Technische loggegevens en anonieme bezoekstatistieken verwerken we op grond van ons gerechtvaardigd belang om de website veilig te houden en te verbeteren.",
           "We gebruiken je gegevens niet voor reclame en we verkopen ze niet.",
         ],
       },
@@ -277,6 +277,7 @@ export const legal: Record<LegalDocKey, LegalDoc> = {
         body: [
           "Je winkelwagen en favorieten worden in je eigen browser bewaard, niet bij ons. Je kunt ze verwijderen via de instellingen van je browser.",
           "Deze website gebruikt geen trackingcookies en geen advertentiecookies.",
+          "We houden anonieme statistieken bij over het bezoek aan de website en over de laadsnelheid, via Vercel Analytics en Speed Insights. Daarvoor worden geen cookies geplaatst en bezoekers worden niet herkend of gevolgd over andere websites.",
           "Tijdens het betalen kom je op een pagina van Stripe. Stripe plaatst daar cookies die nodig zijn voor een veilige betaling.",
         ],
       },

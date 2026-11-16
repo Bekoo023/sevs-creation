@@ -26,7 +26,7 @@ export function Intro() {
               </p>
             </RiseBlock>
             <RiseBlock delay={0.2}>
-              <p>Geen een lijst in het zelfde. Dat is precies de bedoeling.</p>
+              <p>Geen enkele lijst is hetzelfde. Dat is precies de bedoeling.</p>
             </RiseBlock>
             <Flourish className="w-48 text-gold" />
           </div>
