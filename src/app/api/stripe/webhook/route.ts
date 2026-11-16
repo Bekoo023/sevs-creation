@@ -2,6 +2,7 @@ import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { db } from "@/lib/db";
+import { sendNewOrderNotification, sendOrderConfirmation } from "@/lib/email";
 import { getStripe } from "@/lib/stripe";
 
 /**
@@ -55,12 +56,12 @@ async function markPaid(session: Stripe.Checkout.Session) {
   if (!db || !orderId) return;
 
   // Idempotent: Stripe kan hetzelfde event vaker sturen.
-  const stockChanged = await db.$transaction(async (tx) => {
+  const result = await db.$transaction(async (tx) => {
     const updated = await tx.order.updateMany({
       where: { id: orderId, status: { in: ["PENDING", "PAYMENT_FAILED"] } },
       data: { status: "PAID", paidAt: new Date(), stripeSessionId: session.id },
     });
-    if (updated.count === 0) return false;
+    if (updated.count === 0) return null;
 
     const items = await tx.orderItem.findMany({ where: { orderId } });
     let changed = false;
@@ -72,10 +73,15 @@ async function markPaid(session: Stripe.Checkout.Session) {
       });
       changed ||= res.count > 0;
     }
-    return changed;
+    return { stockChanged: changed };
   });
 
-  if (stockChanged) revalidateTag("products", "max");
+  // `null`: deze bestelling was al betaald, dus ook de e-mails zijn al verstuurd.
+  if (!result) return;
+  if (result.stockChanged) revalidateTag("products", "max");
+
+  const order = await db.order.findUnique({ where: { id: orderId }, include: { items: true } });
+  if (order) await Promise.all([sendOrderConfirmation(order), sendNewOrderNotification(order)]);
 }
 
 async function setStatus(session: Stripe.Checkout.Session, status: "PAYMENT_FAILED" | "CANCELLED") {

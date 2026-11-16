@@ -47,6 +47,7 @@ export const customerSchema = z.object({
 export const checkoutSchema = z.object({
   customer: customerSchema,
   items: z.array(cartLineSchema).min(1, "Je winkelwagen is leeg").max(20),
+  acceptedTerms: z.literal(true, "Ga akkoord met de algemene voorwaarden om te bestellen"),
 });
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
