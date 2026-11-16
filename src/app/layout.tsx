@@ -5,6 +5,7 @@ import "@fontsource-variable/manrope/wght.css";
 import "@fontsource/great-vibes/400.css";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -29,7 +30,10 @@ export const viewport: Viewport = { themeColor: "#faf7f2" };
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="nl" className="antialiased">
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
